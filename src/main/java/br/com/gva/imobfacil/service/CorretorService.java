@@ -1,0 +1,77 @@
+package br.com.gva.imobfacil.service;
+
+import br.com.gva.imobfacil.dto.CorretorDTO;
+import br.com.gva.imobfacil.model.Corretor;
+import br.com.gva.imobfacil.repository.CorretorRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CorretorService {
+    
+    private final CorretorRepository corretorRepository;
+    
+    public CorretorDTO criarCorretor(Corretor corretor) {
+        Corretor saved = corretorRepository.save(corretor);
+        return convertToDTO(saved);
+    }
+    
+    public CorretorDTO obterPorId(Long id) {
+        Corretor corretor = corretorRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Corretor não encontrado com ID: " + id));
+        return convertToDTO(corretor);
+    }
+    
+    public CorretorDTO obterPorEmail(String email) {
+        Corretor corretor = corretorRepository.findByEmail(email);
+        if (corretor == null) {
+            throw new RuntimeException("Corretor não encontrado com email: " + email);
+        }
+        return convertToDTO(corretor);
+    }
+    
+    public CorretorDTO obterPorCreci(String creci) {
+        Corretor corretor = corretorRepository.findByCreci(creci);
+        if (corretor == null) {
+            throw new RuntimeException("Corretor não encontrado com CRECI: " + creci);
+        }
+        return convertToDTO(corretor);
+    }
+    
+    public Page<CorretorDTO> listarTodos(Pageable pageable) {
+        return corretorRepository.findAll(pageable)
+            .map(this::convertToDTO);
+    }
+    
+    public CorretorDTO atualizarCorretor(Long id, Corretor corretorAtualizado) {
+        Corretor corretor = corretorRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Corretor não encontrado com ID: " + id));
+        
+        corretor.setNome(corretorAtualizado.getNome());
+        corretor.setCreci(corretorAtualizado.getCreci());
+        corretor.setTelefone(corretorAtualizado.getTelefone());
+        corretor.setEmail(corretorAtualizado.getEmail());
+        corretor.setFoto(corretorAtualizado.getFoto());
+        
+        Corretor updated = corretorRepository.save(corretor);
+        return convertToDTO(updated);
+    }
+    
+    public void deletarCorretor(Long id) {
+        corretorRepository.deleteById(id);
+    }
+    
+    public CorretorDTO convertToDTO(Corretor corretor) {
+        CorretorDTO dto = new CorretorDTO();
+        dto.setId(corretor.getId());
+        dto.setNome(corretor.getNome());
+        dto.setCreci(corretor.getCreci());
+        dto.setTelefone(corretor.getTelefone());
+        dto.setEmail(corretor.getEmail());
+        dto.setFoto(corretor.getFoto());
+        return dto;
+    }
+}
