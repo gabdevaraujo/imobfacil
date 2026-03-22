@@ -28,7 +28,7 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
     @Query("SELECT i FROM Imovel i WHERE " +
            "i.preco BETWEEN :minPreco AND :maxPreco AND " +
            "i.quartos >= :minQuartos AND " +
-           "i.tipoNegocio = :tipoNegocio")
+           "(:tipoNegocio IS NULL OR i.tipoNegocio = :tipoNegocio)")
     Page<Imovel> findByFiltros(
         @Param("minPreco") BigDecimal minPreco,
         @Param("maxPreco") BigDecimal maxPreco,
@@ -36,11 +36,11 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
         @Param("tipoNegocio") TipoNegocio tipoNegocio,
         Pageable pageable
     );
-    
+
     @Query("SELECT i FROM Imovel i WHERE " +
            "i.preco BETWEEN :minPreco AND :maxPreco AND " +
            "i.quartos >= :minQuartos AND " +
-           "i.tipoNegocio = :tipoNegocio AND " +
+           "(:tipoNegocio IS NULL OR i.tipoNegocio = :tipoNegocio) AND " +
            "i.endereco.cidade = :cidade AND " +
            "i.endereco.bairro = :bairro")
     Page<Imovel> findByFiltrosCompletos(

@@ -1,4 +1,6 @@
 package br.com.gva.imobfacil.service;
+import br.com.gva.imobfacil.exception.RecursoNaoEncontradoException;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.gva.imobfacil.dto.CaracteristicaDTO;
 import br.com.gva.imobfacil.dto.CorretorDTO;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ImovelService {
 
     private final ImovelRepository imovelRepository;
@@ -35,6 +38,7 @@ public class ImovelService {
     private final CaracteristicaRepository caracteristicaRepository;
     private final ImagemService imagemService;
 
+    @Transactional
     public ImovelDTO criarImovel(ImovelRequest request) {
         Imovel imovel = toEntity(request);
         return convertToDTO(imovelRepository.save(imovel));
@@ -42,14 +46,14 @@ public class ImovelService {
 
     public ImovelDTO obterImovelPorId(Long id) {
         Imovel imovel = imovelRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Imóvel não encontrado com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Imóvel não encontrado com ID: " + id));
         return convertToDTO(imovel);
     }
 
     public ImovelDTO obterImovelPorReferencia(String referencia) {
         Imovel imovel = imovelRepository.findByReferencia(referencia);
         if (imovel == null) {
-            throw new RuntimeException("Imóvel não encontrado com referência: " + referencia);
+            throw new RecursoNaoEncontradoException("Imóvel não encontrado com referência: " + referencia);
         }
         return convertToDTO(imovel);
     }
@@ -93,9 +97,10 @@ public class ImovelService {
         return imovelRepository.findByEndereco_Bairro(bairro, pageable).map(this::convertToDTO);
     }
 
+    @Transactional
     public ImovelDTO atualizarImovel(Long id, ImovelRequest request) {
         Imovel imovel = imovelRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Imóvel não encontrado com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Imóvel não encontrado com ID: " + id));
 
         imovel.setTitulo(request.getTitulo());
         imovel.setDescricao(request.getDescricao());
@@ -115,9 +120,10 @@ public class ImovelService {
         return convertToDTO(imovelRepository.save(imovel));
     }
 
+    @Transactional
     public void deletarImovel(Long id) {
         Imovel imovel = imovelRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Imóvel não encontrado com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Imóvel não encontrado com ID: " + id));
         imagemService.deletarPorImovelId(id);
         imovelRepository.delete(imovel);
     }
@@ -158,7 +164,7 @@ public class ImovelService {
 
     private Corretor resolveCorretor(Long corretorId) {
         return corretorRepository.findById(corretorId)
-            .orElseThrow(() -> new RuntimeException("Corretor não encontrado com ID: " + corretorId));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Corretor não encontrado com ID: " + corretorId));
     }
 
     private List<Caracteristica> resolveCaracteristicas(List<Long> ids) {

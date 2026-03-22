@@ -1,4 +1,6 @@
 package br.com.gva.imobfacil.service;
+import br.com.gva.imobfacil.exception.RecursoNaoEncontradoException;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.gva.imobfacil.dto.CaracteristicaDTO;
 import br.com.gva.imobfacil.dto.request.CaracteristicaRequest;
@@ -11,10 +13,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CaracteristicaService {
     
     private final CaracteristicaRepository caracteristicaRepository;
     
+    @Transactional
     public CaracteristicaDTO criarCaracteristica(CaracteristicaRequest request) {
         Caracteristica saved = caracteristicaRepository.save(toEntity(request));
         return convertToDTO(saved);
@@ -28,14 +32,14 @@ public class CaracteristicaService {
     
     public CaracteristicaDTO obterPorId(Long id) {
         Caracteristica caracteristica = caracteristicaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Característica não encontrada com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Característica não encontrada com ID: " + id));
         return convertToDTO(caracteristica);
     }
     
     public CaracteristicaDTO obterPorNome(String nome) {
         Caracteristica caracteristica = caracteristicaRepository.findByNome(nome);
         if (caracteristica == null) {
-            throw new RuntimeException("Característica não encontrada com nome: " + nome);
+            throw new RecursoNaoEncontradoException("Característica não encontrada com nome: " + nome);
         }
         return convertToDTO(caracteristica);
     }
@@ -45,15 +49,17 @@ public class CaracteristicaService {
             .map(this::convertToDTO);
     }
     
+    @Transactional
     public CaracteristicaDTO atualizarCaracteristica(Long id, CaracteristicaRequest request) {
         Caracteristica caracteristica = caracteristicaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Característica não encontrada com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Característica não encontrada com ID: " + id));
 
         caracteristica.setNome(request.getNome());
 
         return convertToDTO(caracteristicaRepository.save(caracteristica));
     }
     
+    @Transactional
     public void deletarCaracteristica(Long id) {
         caracteristicaRepository.deleteById(id);
     }

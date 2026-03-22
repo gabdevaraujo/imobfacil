@@ -1,4 +1,6 @@
 package br.com.gva.imobfacil.service;
+import br.com.gva.imobfacil.exception.RecursoNaoEncontradoException;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.gva.imobfacil.dto.MensagemContatoDTO;
 import br.com.gva.imobfacil.dto.request.MensagemContatoRequest;
@@ -15,11 +17,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class MensagemContatoService {
 
     private final MensagemContatoRepository mensagemContatoRepository;
     private final ImovelRepository imovelRepository;
 
+    @Transactional
     public MensagemContatoDTO criarMensagem(MensagemContatoRequest request) {
         MensagemContato mensagem = toEntity(request);
         MensagemContato saved = mensagemContatoRepository.save(mensagem);
@@ -29,7 +33,7 @@ public class MensagemContatoService {
 
     public MensagemContatoDTO obterPorId(Long id) {
         MensagemContato mensagem = mensagemContatoRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Mensagem não encontrada com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Mensagem não encontrada com ID: " + id));
         return convertToDTO(mensagem);
     }
 
@@ -41,6 +45,7 @@ public class MensagemContatoService {
         return mensagemContatoRepository.findByImovel_Id(imovelId, pageable).map(this::convertToDTO);
     }
 
+    @Transactional
     public void deletarMensagem(Long id) {
         mensagemContatoRepository.deleteById(id);
     }
@@ -54,7 +59,7 @@ public class MensagemContatoService {
 
         if (request.getImovelId() != null) {
             Imovel imovel = imovelRepository.findById(request.getImovelId())
-                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado com ID: " + request.getImovelId()));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Imóvel não encontrado com ID: " + request.getImovelId()));
             mensagem.setImovel(imovel);
         }
 

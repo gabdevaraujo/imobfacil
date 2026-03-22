@@ -1,4 +1,6 @@
 package br.com.gva.imobfacil.service;
+import br.com.gva.imobfacil.exception.RecursoNaoEncontradoException;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.gva.imobfacil.dto.CorretorDTO;
 import br.com.gva.imobfacil.dto.request.CorretorRequest;
@@ -11,10 +13,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CorretorService {
     
     private final CorretorRepository corretorRepository;
     
+    @Transactional
     public CorretorDTO criarCorretor(CorretorRequest request) {
         Corretor saved = corretorRepository.save(toEntity(request));
         return convertToDTO(saved);
@@ -22,14 +26,14 @@ public class CorretorService {
     
     public CorretorDTO obterPorId(Long id) {
         Corretor corretor = corretorRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Corretor não encontrado com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Corretor não encontrado com ID: " + id));
         return convertToDTO(corretor);
     }
     
     public CorretorDTO obterPorEmail(String email) {
         Corretor corretor = corretorRepository.findByEmail(email);
         if (corretor == null) {
-            throw new RuntimeException("Corretor não encontrado com email: " + email);
+            throw new RecursoNaoEncontradoException("Corretor não encontrado com email: " + email);
         }
         return convertToDTO(corretor);
     }
@@ -37,7 +41,7 @@ public class CorretorService {
     public CorretorDTO obterPorCreci(String creci) {
         Corretor corretor = corretorRepository.findByCreci(creci);
         if (corretor == null) {
-            throw new RuntimeException("Corretor não encontrado com CRECI: " + creci);
+            throw new RecursoNaoEncontradoException("Corretor não encontrado com CRECI: " + creci);
         }
         return convertToDTO(corretor);
     }
@@ -47,9 +51,10 @@ public class CorretorService {
             .map(this::convertToDTO);
     }
     
+    @Transactional
     public CorretorDTO atualizarCorretor(Long id, CorretorRequest request) {
         Corretor corretor = corretorRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Corretor não encontrado com ID: " + id));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Corretor não encontrado com ID: " + id));
 
         corretor.setNome(request.getNome());
         corretor.setCreci(request.getCreci());
@@ -70,6 +75,7 @@ public class CorretorService {
         return corretor;
     }
     
+    @Transactional
     public void deletarCorretor(Long id) {
         corretorRepository.deleteById(id);
     }
