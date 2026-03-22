@@ -1,6 +1,7 @@
 package br.com.gva.imobfacil.service;
 
 import br.com.gva.imobfacil.dto.CaracteristicaDTO;
+import br.com.gva.imobfacil.dto.request.CaracteristicaRequest;
 import br.com.gva.imobfacil.model.Caracteristica;
 import br.com.gva.imobfacil.repository.CaracteristicaRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,15 @@ public class CaracteristicaService {
     
     private final CaracteristicaRepository caracteristicaRepository;
     
-    public CaracteristicaDTO criarCaracteristica(Caracteristica caracteristica) {
-        Caracteristica saved = caracteristicaRepository.save(caracteristica);
+    public CaracteristicaDTO criarCaracteristica(CaracteristicaRequest request) {
+        Caracteristica saved = caracteristicaRepository.save(toEntity(request));
         return convertToDTO(saved);
+    }
+
+    private Caracteristica toEntity(CaracteristicaRequest request) {
+        Caracteristica caracteristica = new Caracteristica();
+        caracteristica.setNome(request.getNome());
+        return caracteristica;
     }
     
     public CaracteristicaDTO obterPorId(Long id) {
@@ -38,14 +45,13 @@ public class CaracteristicaService {
             .map(this::convertToDTO);
     }
     
-    public CaracteristicaDTO atualizarCaracteristica(Long id, Caracteristica caracteristicaAtualizada) {
+    public CaracteristicaDTO atualizarCaracteristica(Long id, CaracteristicaRequest request) {
         Caracteristica caracteristica = caracteristicaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Característica não encontrada com ID: " + id));
-        
-        caracteristica.setNome(caracteristicaAtualizada.getNome());
-        
-        Caracteristica updated = caracteristicaRepository.save(caracteristica);
-        return convertToDTO(updated);
+
+        caracteristica.setNome(request.getNome());
+
+        return convertToDTO(caracteristicaRepository.save(caracteristica));
     }
     
     public void deletarCaracteristica(Long id) {

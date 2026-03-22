@@ -1,10 +1,11 @@
 package br.com.gva.imobfacil.controller;
 
 import br.com.gva.imobfacil.dto.ImovelDTO;
-import br.com.gva.imobfacil.model.Imovel;
+import br.com.gva.imobfacil.dto.request.ImovelRequest;
 import br.com.gva.imobfacil.model.StatusImovel;
 import br.com.gva.imobfacil.model.TipoNegocio;
 import br.com.gva.imobfacil.service.ImovelService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,27 +19,25 @@ import java.math.BigDecimal;
 @RequestMapping("/imoveis")
 @RequiredArgsConstructor
 public class ImovelController {
-    
+
     private final ImovelService imovelService;
-    
+
     @PostMapping
-    public ResponseEntity<ImovelDTO> criarImovel(@RequestBody Imovel imovel) {
-        ImovelDTO dto = imovelService.criarImovel(imovel);
+    public ResponseEntity<ImovelDTO> criarImovel(@Valid @RequestBody ImovelRequest request) {
+        ImovelDTO dto = imovelService.criarImovel(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<ImovelDTO> obterImovelPorId(@PathVariable Long id) {
-        ImovelDTO dto = imovelService.obterImovelPorId(id);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(imovelService.obterImovelPorId(id));
     }
-    
+
     @GetMapping("/referencia/{referencia}")
     public ResponseEntity<ImovelDTO> obterImovelPorReferencia(@PathVariable String referencia) {
-        ImovelDTO dto = imovelService.obterImovelPorReferencia(referencia);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(imovelService.obterImovelPorReferencia(referencia));
     }
-    
+
     @GetMapping
     public ResponseEntity<Page<ImovelDTO>> listarTodos(
         @RequestParam(required = false) BigDecimal minPreco,
@@ -49,11 +48,10 @@ public class ImovelController {
         @RequestParam(required = false) String bairro,
         @RequestParam(required = false) StatusImovel status,
         Pageable pageable) {
-        
-        // Se houver filtros, aplicá-los
-        if (minPreco != null || maxPreco != null || minQuartos != null || 
+
+        if (minPreco != null || maxPreco != null || minQuartos != null ||
             tipoNegocio != null || cidade != null || bairro != null) {
-            Page<ImovelDTO> page = imovelService.buscarPorFiltros(
+            return ResponseEntity.ok(imovelService.buscarPorFiltros(
                 minPreco != null ? minPreco : BigDecimal.ZERO,
                 maxPreco != null ? maxPreco : new BigDecimal("999999999"),
                 minQuartos != null ? minQuartos : 0,
@@ -61,57 +59,49 @@ public class ImovelController {
                 cidade,
                 bairro,
                 pageable
-            );
-            return ResponseEntity.ok(page);
+            ));
         } else if (status != null) {
-            Page<ImovelDTO> page = imovelService.buscarPorStatus(status, pageable);
-            return ResponseEntity.ok(page);
+            return ResponseEntity.ok(imovelService.buscarPorStatus(status, pageable));
         } else {
-            Page<ImovelDTO> page = imovelService.listarTodos(pageable);
-            return ResponseEntity.ok(page);
+            return ResponseEntity.ok(imovelService.listarTodos(pageable));
         }
     }
-    
+
     @GetMapping("/tipo/{tipoNegocio}")
     public ResponseEntity<Page<ImovelDTO>> buscarPorTipoNegocio(
         @PathVariable TipoNegocio tipoNegocio,
         Pageable pageable) {
-        Page<ImovelDTO> page = imovelService.buscarPorTipoNegocio(tipoNegocio, pageable);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(imovelService.buscarPorTipoNegocio(tipoNegocio, pageable));
     }
-    
+
     @GetMapping("/status/{status}")
     public ResponseEntity<Page<ImovelDTO>> buscarPorStatus(
         @PathVariable StatusImovel status,
         Pageable pageable) {
-        Page<ImovelDTO> page = imovelService.buscarPorStatus(status, pageable);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(imovelService.buscarPorStatus(status, pageable));
     }
-    
+
     @GetMapping("/cidade/{cidade}")
     public ResponseEntity<Page<ImovelDTO>> buscarPorCidade(
         @PathVariable String cidade,
         Pageable pageable) {
-        Page<ImovelDTO> page = imovelService.buscarPorCidade(cidade, pageable);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(imovelService.buscarPorCidade(cidade, pageable));
     }
-    
+
     @GetMapping("/bairro/{bairro}")
     public ResponseEntity<Page<ImovelDTO>> buscarPorBairro(
         @PathVariable String bairro,
         Pageable pageable) {
-        Page<ImovelDTO> page = imovelService.buscarPorBairro(bairro, pageable);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(imovelService.buscarPorBairro(bairro, pageable));
     }
-    
+
     @PutMapping("/{id}")
     public ResponseEntity<ImovelDTO> atualizarImovel(
         @PathVariable Long id,
-        @RequestBody Imovel imovelAtualizado) {
-        ImovelDTO dto = imovelService.atualizarImovel(id, imovelAtualizado);
-        return ResponseEntity.ok(dto);
+        @Valid @RequestBody ImovelRequest request) {
+        return ResponseEntity.ok(imovelService.atualizarImovel(id, request));
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarImovel(@PathVariable Long id) {
         imovelService.deletarImovel(id);

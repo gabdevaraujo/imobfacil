@@ -1,6 +1,7 @@
 package br.com.gva.imobfacil.service;
 
 import br.com.gva.imobfacil.dto.CorretorDTO;
+import br.com.gva.imobfacil.dto.request.CorretorRequest;
 import br.com.gva.imobfacil.model.Corretor;
 import br.com.gva.imobfacil.repository.CorretorRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,8 @@ public class CorretorService {
     
     private final CorretorRepository corretorRepository;
     
-    public CorretorDTO criarCorretor(Corretor corretor) {
-        Corretor saved = corretorRepository.save(corretor);
+    public CorretorDTO criarCorretor(CorretorRequest request) {
+        Corretor saved = corretorRepository.save(toEntity(request));
         return convertToDTO(saved);
     }
     
@@ -46,18 +47,27 @@ public class CorretorService {
             .map(this::convertToDTO);
     }
     
-    public CorretorDTO atualizarCorretor(Long id, Corretor corretorAtualizado) {
+    public CorretorDTO atualizarCorretor(Long id, CorretorRequest request) {
         Corretor corretor = corretorRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Corretor não encontrado com ID: " + id));
-        
-        corretor.setNome(corretorAtualizado.getNome());
-        corretor.setCreci(corretorAtualizado.getCreci());
-        corretor.setTelefone(corretorAtualizado.getTelefone());
-        corretor.setEmail(corretorAtualizado.getEmail());
-        corretor.setFoto(corretorAtualizado.getFoto());
-        
-        Corretor updated = corretorRepository.save(corretor);
-        return convertToDTO(updated);
+
+        corretor.setNome(request.getNome());
+        corretor.setCreci(request.getCreci());
+        corretor.setTelefone(request.getTelefone());
+        corretor.setEmail(request.getEmail());
+        corretor.setFoto(request.getFoto());
+
+        return convertToDTO(corretorRepository.save(corretor));
+    }
+
+    private Corretor toEntity(CorretorRequest request) {
+        Corretor corretor = new Corretor();
+        corretor.setNome(request.getNome());
+        corretor.setCreci(request.getCreci());
+        corretor.setTelefone(request.getTelefone());
+        corretor.setEmail(request.getEmail());
+        corretor.setFoto(request.getFoto());
+        return corretor;
     }
     
     public void deletarCorretor(Long id) {
