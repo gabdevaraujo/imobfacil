@@ -1,0 +1,648 @@
+{
+  "info": {
+    "name": "Imobfácil API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"senha\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Corretores",
+      "item": [
+        {
+          "name": "Listar todos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/corretores?page=0&size=10&sort=nome,asc",
+              "host": ["{{base_url}}"],
+              "path": ["corretores"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "sort", "value": "nome,asc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/corretores/1",
+              "host": ["{{base_url}}"],
+              "path": ["corretores", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por email",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/corretores/email/corretor@imobfacil.com.br",
+              "host": ["{{base_url}}"],
+              "path": ["corretores", "email", "corretor@imobfacil.com.br"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por CRECI",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/corretores/creci/123456-F",
+              "host": ["{{base_url}}"],
+              "path": ["corretores", "creci", "123456-F"]
+            }
+          }
+        },
+        {
+          "name": "Criar corretor",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"creci\": \"123456-F\",\n  \"telefone\": \"(11) 99999-0001\",\n  \"email\": \"joao.silva@imobfacil.com.br\",\n  \"foto\": \"https://example.com/fotos/joao.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/corretores",
+              "host": ["{{base_url}}"],
+              "path": ["corretores"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar corretor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva Atualizado\",\n  \"creci\": \"123456-F\",\n  \"telefone\": \"(11) 99999-0002\",\n  \"email\": \"joao.silva@imobfacil.com.br\",\n  \"foto\": \"https://example.com/fotos/joao-novo.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/corretores/1",
+              "host": ["{{base_url}}"],
+              "path": ["corretores", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar corretor",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/corretores/1",
+              "host": ["{{base_url}}"],
+              "path": ["corretores", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Características",
+      "item": [
+        {
+          "name": "Listar todas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/caracteristicas?page=0&size=20",
+              "host": ["{{base_url}}"],
+              "path": ["caracteristicas"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/caracteristicas/1",
+              "host": ["{{base_url}}"],
+              "path": ["caracteristicas", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por nome",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/caracteristicas/nome/Piscina",
+              "host": ["{{base_url}}"],
+              "path": ["caracteristicas", "nome", "Piscina"]
+            }
+          }
+        },
+        {
+          "name": "Criar característica",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Piscina\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/caracteristicas",
+              "host": ["{{base_url}}"],
+              "path": ["caracteristicas"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar característica",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Piscina Aquecida\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/caracteristicas/1",
+              "host": ["{{base_url}}"],
+              "path": ["caracteristicas", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar característica",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/caracteristicas/1",
+              "host": ["{{base_url}}"],
+              "path": ["caracteristicas", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Imóveis",
+      "item": [
+        {
+          "name": "Listar todos (sem filtro)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis?page=0&size=10&sort=dataCriacao,desc",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "sort", "value": "dataCriacao,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por preço e quartos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis?minPreco=200000&maxPreco=800000&minQuartos=2&page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis"],
+              "query": [
+                { "key": "minPreco", "value": "200000" },
+                { "key": "maxPreco", "value": "800000" },
+                { "key": "minQuartos", "value": "2" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por tipo de imóvel",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis?tipoImovel=APARTAMENTO&page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis"],
+              "query": [
+                { "key": "tipoImovel", "value": "APARTAMENTO", "description": "APARTAMENTO | CASA | COBERTURA | STUDIO | TERRENO | COMERCIAL" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por tipo de negócio",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis?tipoNegocio=VENDA&page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis"],
+              "query": [
+                { "key": "tipoNegocio", "value": "VENDA", "description": "VENDA | ALUGUEL | ALUGUEL_TEMPORADA" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis?status=DISPONIVEL&page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis"],
+              "query": [
+                { "key": "status", "value": "DISPONIVEL", "description": "DISPONIVEL | ALUGADO | VENDIDO | INDISPONIVEL | EM_CONSTRUCAO" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar completo (cidade + bairro + tipo + preço)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis?cidade=São Paulo&bairro=Moema&tipoNegocio=VENDA&minPreco=500000&maxPreco=2000000&minQuartos=2&page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis"],
+              "query": [
+                { "key": "cidade", "value": "São Paulo" },
+                { "key": "bairro", "value": "Moema" },
+                { "key": "tipoNegocio", "value": "VENDA" },
+                { "key": "minPreco", "value": "500000" },
+                { "key": "maxPreco", "value": "2000000" },
+                { "key": "minQuartos", "value": "2" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis/1",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por referência",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis/referencia/AP-001",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "referencia", "AP-001"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por tipo de negócio (path)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis/tipo/ALUGUEL?page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "tipo", "ALUGUEL"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por status (path)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis/status/DISPONIVEL?page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "status", "DISPONIVEL"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por cidade",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis/cidade/São Paulo?page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "cidade", "São Paulo"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por bairro",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/imoveis/bairro/Moema?page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "bairro", "Moema"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar imóvel",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referencia\": \"AP-010\",\n  \"titulo\": \"Apartamento moderno em Moema\",\n  \"descricao\": \"Lindo apartamento com vista para o parque, acabamento de alto padrão.\",\n  \"preco\": 850000.00,\n  \"tipoNegocio\": \"VENDA\",\n  \"tipoImovel\": \"APARTAMENTO\",\n  \"areaTotalM2\": 110.0,\n  \"areaPrivativaM2\": 95.0,\n  \"quartos\": 3,\n  \"suites\": 1,\n  \"banheiros\": 2,\n  \"vagas\": 2,\n  \"status\": \"DISPONIVEL\",\n  \"endereco\": {\n    \"logradouro\": \"Avenida Ibirapuera\",\n    \"numero\": \"2907\",\n    \"complemento\": \"Apto 42\",\n    \"bairro\": \"Moema\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"04029-200\",\n    \"latitude\": -23.6005,\n    \"longitude\": -46.6652\n  },\n  \"corretorId\": 1,\n  \"caracteristicaIds\": [1, 2, 3]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/imoveis",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar imóvel",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referencia\": \"AP-010\",\n  \"titulo\": \"Apartamento moderno em Moema — Preço reduzido!\",\n  \"descricao\": \"Lindo apartamento com vista para o parque, acabamento de alto padrão.\",\n  \"preco\": 799000.00,\n  \"tipoNegocio\": \"VENDA\",\n  \"tipoImovel\": \"APARTAMENTO\",\n  \"areaTotalM2\": 110.0,\n  \"areaPrivativaM2\": 95.0,\n  \"quartos\": 3,\n  \"suites\": 1,\n  \"banheiros\": 2,\n  \"vagas\": 2,\n  \"status\": \"DISPONIVEL\",\n  \"endereco\": {\n    \"logradouro\": \"Avenida Ibirapuera\",\n    \"numero\": \"2907\",\n    \"complemento\": \"Apto 42\",\n    \"bairro\": \"Moema\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"04029-200\",\n    \"latitude\": -23.6005,\n    \"longitude\": -46.6652\n  },\n  \"corretorId\": 1,\n  \"caracteristicaIds\": [1, 2]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/imoveis/1",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar imóvel",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imoveis/1",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "1"]
+            }
+          }
+        },
+        {
+          "name": "Upload de imagem",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "arquivo",
+                  "type": "file",
+                  "src": "",
+                  "description": "Arquivo de imagem (JPG, PNG, WEBP)"
+                },
+                {
+                  "key": "descricao",
+                  "value": "Sala de estar",
+                  "type": "text",
+                  "description": "Legenda opcional da imagem"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/imoveis/1/imagens",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "1", "imagens"]
+            }
+          }
+        },
+        {
+          "name": "Deletar imagem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/imoveis/1/imagens/1",
+              "host": ["{{base_url}}"],
+              "path": ["imoveis", "1", "imagens", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contato (Leads)",
+      "item": [
+        {
+          "name": "Enviar mensagem (público)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Oliveira\",\n  \"email\": \"maria.oliveira@email.com\",\n  \"telefone\": \"(11) 98888-0001\",\n  \"mensagem\": \"Tenho interesse neste imóvel. Qual a disponibilidade para visita?\",\n  \"imovelId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/contato",
+              "host": ["{{base_url}}"],
+              "path": ["contato"]
+            }
+          }
+        },
+        {
+          "name": "Enviar mensagem genérica (sem imóvel)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Pereira\",\n  \"email\": \"carlos.pereira@email.com\",\n  \"telefone\": \"(21) 97777-0002\",\n  \"mensagem\": \"Gostaria de saber sobre imóveis disponíveis para aluguel na zona sul.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/contato",
+              "host": ["{{base_url}}"],
+              "path": ["contato"]
+            }
+          }
+        },
+        {
+          "name": "Buscar mensagem por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/contato/1",
+              "host": ["{{base_url}}"],
+              "path": ["contato", "1"]
+            }
+          }
+        },
+        {
+          "name": "Listar todas as mensagens",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/contato?page=0&size=20&sort=dataEnvio,desc",
+              "host": ["{{base_url}}"],
+              "path": ["contato"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" },
+                { "key": "sort", "value": "dataEnvio,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar mensagens por imóvel",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/contato/imovel/1?page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["contato", "imovel", "1"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deletar mensagem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/contato/1",
+              "host": ["{{base_url}}"],
+              "path": ["contato", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

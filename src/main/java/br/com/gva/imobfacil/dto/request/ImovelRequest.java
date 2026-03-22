@@ -1,6 +1,7 @@
 package br.com.gva.imobfacil.dto.request;
 
 import br.com.gva.imobfacil.model.StatusImovel;
+import br.com.gva.imobfacil.model.TipoImovel;
 import br.com.gva.imobfacil.model.TipoNegocio;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -29,6 +30,9 @@ public class ImovelRequest {
 
     @NotNull
     private TipoNegocio tipoNegocio;
+
+    @NotNull
+    private TipoImovel tipoImovel;
 
     @NotNull
     @Positive

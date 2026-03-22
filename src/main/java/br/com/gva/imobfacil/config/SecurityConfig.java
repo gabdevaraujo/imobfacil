@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 // H2 console — público em dev
                 .requestMatchers("/h2-console/**").permitAll()
+                // Arquivos de upload — servidos como recurso estático
+                .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                 // Leitura de imóveis, corretores e características — público
                 .requestMatchers(HttpMethod.GET, "/imoveis/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/corretores/**").permitAll()

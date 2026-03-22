@@ -1,0 +1,41 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: imobfacil-db
+    environment:
+      POSTGRES_DB: imobfacildb
+      POSTGRES_USER: imobfacil
+      POSTGRES_PASSWORD: imobfacil@local
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U imobfacil -d imobfacildb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: imobfacil-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/imobfacildb
+      SPRING_DATASOURCE_USERNAME: imobfacil
+      SPRING_DATASOURCE_PASSWORD: imobfacil@local
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      UPLOAD_DIR: /app/uploads/imagens
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads:/app/uploads
+
+volumes:
+  pgdata:
+  uploads:

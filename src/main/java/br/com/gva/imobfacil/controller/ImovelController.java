@@ -1,8 +1,10 @@
 package br.com.gva.imobfacil.controller;
 
 import br.com.gva.imobfacil.dto.ImovelDTO;
+import br.com.gva.imobfacil.dto.ImovelResumoDTO;
 import br.com.gva.imobfacil.dto.request.ImovelRequest;
 import br.com.gva.imobfacil.model.StatusImovel;
+import br.com.gva.imobfacil.model.TipoImovel;
 import br.com.gva.imobfacil.model.TipoNegocio;
 import br.com.gva.imobfacil.service.ImovelService;
 import jakarta.validation.Valid;
@@ -24,8 +26,7 @@ public class ImovelController {
 
     @PostMapping
     public ResponseEntity<ImovelDTO> criarImovel(@Valid @RequestBody ImovelRequest request) {
-        ImovelDTO dto = imovelService.criarImovel(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(imovelService.criarImovel(request));
     }
 
     @GetMapping("/{id}")
@@ -39,23 +40,25 @@ public class ImovelController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ImovelDTO>> listarTodos(
+    public ResponseEntity<Page<ImovelResumoDTO>> listarTodos(
         @RequestParam(required = false) BigDecimal minPreco,
         @RequestParam(required = false) BigDecimal maxPreco,
         @RequestParam(required = false) Integer minQuartos,
         @RequestParam(required = false) TipoNegocio tipoNegocio,
+        @RequestParam(required = false) TipoImovel tipoImovel,
         @RequestParam(required = false) String cidade,
         @RequestParam(required = false) String bairro,
         @RequestParam(required = false) StatusImovel status,
         Pageable pageable) {
 
         if (minPreco != null || maxPreco != null || minQuartos != null ||
-            tipoNegocio != null || cidade != null || bairro != null) {
+            tipoNegocio != null || tipoImovel != null || cidade != null || bairro != null) {
             return ResponseEntity.ok(imovelService.buscarPorFiltros(
                 minPreco != null ? minPreco : BigDecimal.ZERO,
                 maxPreco != null ? maxPreco : new BigDecimal("999999999"),
                 minQuartos != null ? minQuartos : 0,
                 tipoNegocio,
+                tipoImovel,
                 cidade,
                 bairro,
                 pageable
@@ -68,28 +71,28 @@ public class ImovelController {
     }
 
     @GetMapping("/tipo/{tipoNegocio}")
-    public ResponseEntity<Page<ImovelDTO>> buscarPorTipoNegocio(
+    public ResponseEntity<Page<ImovelResumoDTO>> buscarPorTipoNegocio(
         @PathVariable TipoNegocio tipoNegocio,
         Pageable pageable) {
         return ResponseEntity.ok(imovelService.buscarPorTipoNegocio(tipoNegocio, pageable));
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<Page<ImovelDTO>> buscarPorStatus(
+    public ResponseEntity<Page<ImovelResumoDTO>> buscarPorStatus(
         @PathVariable StatusImovel status,
         Pageable pageable) {
         return ResponseEntity.ok(imovelService.buscarPorStatus(status, pageable));
     }
 
     @GetMapping("/cidade/{cidade}")
-    public ResponseEntity<Page<ImovelDTO>> buscarPorCidade(
+    public ResponseEntity<Page<ImovelResumoDTO>> buscarPorCidade(
         @PathVariable String cidade,
         Pageable pageable) {
         return ResponseEntity.ok(imovelService.buscarPorCidade(cidade, pageable));
     }
 
     @GetMapping("/bairro/{bairro}")
-    public ResponseEntity<Page<ImovelDTO>> buscarPorBairro(
+    public ResponseEntity<Page<ImovelResumoDTO>> buscarPorBairro(
         @PathVariable String bairro,
         Pageable pageable) {
         return ResponseEntity.ok(imovelService.buscarPorBairro(bairro, pageable));

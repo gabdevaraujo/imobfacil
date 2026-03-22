@@ -58,54 +58,54 @@ INSERT INTO endereco (id, logradouro, numero, complemento, bairro, cidade, estad
 -- -------------------------------------------------------------
 -- IMÓVEIS
 -- -------------------------------------------------------------
-INSERT INTO imovel (id, referencia, titulo, descricao, preco, tipo_negocio, area_total_m2, area_privativa_m2, quartos, suites, banheiros, vagas, status, endereco_id, corretor_id, data_criacao, data_atualizacao) VALUES
+INSERT INTO imovel (id, referencia, titulo, descricao, preco, tipo_negocio, tipo_imovel, area_total_m2, area_privativa_m2, quartos, suites, banheiros, vagas, status, endereco_id, corretor_id, data_criacao, data_atualizacao) VALUES
 
 (1, 'AP-001',
  'Apartamento Sofisticado nos Jardins',
  'Lindo apartamento com acabamento de alto padrão, piso de mármore, armários planejados em todos os cômodos e vista privilegiada. Prédio com portaria 24h e ampla área de lazer.',
- 850000.00, 'VENDA', 110.0, 95.0, 3, 1, 2, 2, 'DISPONIVEL', 1, 1,
+ 850000.00, 'VENDA', 'APARTAMENTO', 110.0, 95.0, 3, 1, 2, 2, 'DISPONIVEL', 1, 1,
  '2025-11-10 09:00:00', '2025-11-10 09:00:00'),
 
 (2, 'CB-001',
  'Cobertura Dúplex na Avenida Paulista',
  'Cobertura com terraço privativo, piscina própria e vista panorâmica para a cidade. Acabamento premium, home theater, sala de jantar para 12 pessoas e 3 vagas de garagem cobertas.',
- 2500000.00, 'VENDA', 280.0, 250.0, 4, 3, 4, 3, 'DISPONIVEL', 2, 2,
+ 2500000.00, 'VENDA', 'COBERTURA', 280.0, 250.0, 4, 3, 4, 3, 'DISPONIVEL', 2, 2,
  '2025-10-05 14:30:00', '2025-10-05 14:30:00'),
 
 (3, 'AP-002',
  'Studio Moderno — Consolação',
  'Studio compacto e bem resolvido, totalmente mobiliado. Ideal para profissionais ou investidores. Próximo ao metrô Consolação, restaurantes e serviços.',
- 3500.00, 'ALUGUEL', 38.0, 35.0, 1, 0, 1, 1, 'DISPONIVEL', 3, 1,
+ 3500.00, 'ALUGUEL', 'STUDIO', 38.0, 35.0, 1, 0, 1, 1, 'DISPONIVEL', 3, 1,
  '2026-01-08 10:00:00', '2026-01-08 10:00:00'),
 
 (4, 'CA-001',
  'Casa Espaçosa em Pinheiros',
  'Casa com excelente aproveitamento de espaço, jardim privativo, 2 suítes, sala de estar ampla e cozinha integrada. Bairro nobre com fácil acesso à Paulista e ao Parque do Ibirapuera.',
- 1800000.00, 'VENDA', 320.0, 280.0, 4, 2, 3, 3, 'DISPONIVEL', 4, 2,
+ 1800000.00, 'VENDA', 'CASA', 320.0, 280.0, 4, 2, 3, 3, 'DISPONIVEL', 4, 2,
  '2025-12-01 11:00:00', '2025-12-01 11:00:00'),
 
 (5, 'AP-003',
  'Apartamento com Vista para o Mirante — Glória',
  'Apartamento bem localizado no bairro da Glória, Rio de Janeiro, com vista parcial para o Morro da Glória. Sala ampla, cozinha reformada e dois quartos com armários embutidos.',
- 4200.00, 'ALUGUEL', 75.0, 68.0, 2, 1, 2, 1, 'DISPONIVEL', 5, 3,
+ 4200.00, 'ALUGUEL', 'APARTAMENTO', 75.0, 68.0, 2, 1, 2, 1, 'DISPONIVEL', 5, 3,
  '2026-01-20 08:30:00', '2026-01-20 08:30:00'),
 
 (6, 'AP-004',
  'Flat em Copacabana — Temporada',
  'Flat completamente equipado e decorado a 200m da praia de Copacabana. Perfeito para temporada, férias ou curtas estadias. Wi-Fi, TV a cabo e serviço de limpeza inclusos.',
- 350.00, 'ALUGUEL_TEMPORADA', 55.0, 50.0, 1, 1, 1, 1, 'DISPONIVEL', 6, 3,
+ 350.00, 'ALUGUEL_TEMPORADA', 'APARTAMENTO', 55.0, 50.0, 1, 1, 1, 1, 'DISPONIVEL', 6, 3,
  '2026-02-01 15:00:00', '2026-02-01 15:00:00'),
 
 (7, 'CA-002',
  'Mansão nas Laranjeiras',
  'Imóvel com 5 quartos, piscina, quadra de tênis, área gourmet e jardim paisagístico. Projeto arquitetônico assinado. Já vendido — disponível apenas para consulta histórica.',
- 3200000.00, 'VENDA', 650.0, 580.0, 5, 3, 5, 4, 'VENDIDO', 7, 3,
+ 3200000.00, 'VENDA', 'CASA', 650.0, 580.0, 5, 3, 5, 4, 'VENDIDO', 7, 3,
  '2025-09-01 09:00:00', '2025-09-01 09:00:00'),
 
 (8, 'AP-005',
  'Apartamento no Centro de Curitiba',
  'Apartamento reformado em localização central em Curitiba. Próximo à Rua XV de Novembro, Ópera de Arame e transporte público. Ótima opção para quem trabalha no centro.',
- 2800.00, 'ALUGUEL', 65.0, 60.0, 2, 0, 1, 1, 'DISPONIVEL', 8, 1,
+ 2800.00, 'ALUGUEL', 'APARTAMENTO', 65.0, 60.0, 2, 0, 1, 1, 'DISPONIVEL', 8, 1,
  '2026-02-15 12:00:00', '2026-02-15 12:00:00');
 
 

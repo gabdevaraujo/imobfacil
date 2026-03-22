@@ -2,6 +2,7 @@ package br.com.gva.imobfacil.repository;
 
 import br.com.gva.imobfacil.model.Imovel;
 import br.com.gva.imobfacil.model.StatusImovel;
+import br.com.gva.imobfacil.model.TipoImovel;
 import br.com.gva.imobfacil.model.TipoNegocio;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,12 +29,14 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
     @Query("SELECT i FROM Imovel i WHERE " +
            "i.preco BETWEEN :minPreco AND :maxPreco AND " +
            "i.quartos >= :minQuartos AND " +
-           "(:tipoNegocio IS NULL OR i.tipoNegocio = :tipoNegocio)")
+           "(:tipoNegocio IS NULL OR i.tipoNegocio = :tipoNegocio) AND " +
+           "(:tipoImovel IS NULL OR i.tipoImovel = :tipoImovel)")
     Page<Imovel> findByFiltros(
         @Param("minPreco") BigDecimal minPreco,
         @Param("maxPreco") BigDecimal maxPreco,
         @Param("minQuartos") Integer minQuartos,
         @Param("tipoNegocio") TipoNegocio tipoNegocio,
+        @Param("tipoImovel") TipoImovel tipoImovel,
         Pageable pageable
     );
 
@@ -41,6 +44,7 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
            "i.preco BETWEEN :minPreco AND :maxPreco AND " +
            "i.quartos >= :minQuartos AND " +
            "(:tipoNegocio IS NULL OR i.tipoNegocio = :tipoNegocio) AND " +
+           "(:tipoImovel IS NULL OR i.tipoImovel = :tipoImovel) AND " +
            "i.endereco.cidade = :cidade AND " +
            "i.endereco.bairro = :bairro")
     Page<Imovel> findByFiltrosCompletos(
@@ -48,6 +52,7 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
         @Param("maxPreco") BigDecimal maxPreco,
         @Param("minQuartos") Integer minQuartos,
         @Param("tipoNegocio") TipoNegocio tipoNegocio,
+        @Param("tipoImovel") TipoImovel tipoImovel,
         @Param("cidade") String cidade,
         @Param("bairro") String bairro,
         Pageable pageable

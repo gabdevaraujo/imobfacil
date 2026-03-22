@@ -35,6 +35,10 @@ public class Imovel {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoNegocio tipoNegocio;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoImovel tipoImovel;
     
     @Column(nullable = false)
     private BigDecimal areaTotalM2;

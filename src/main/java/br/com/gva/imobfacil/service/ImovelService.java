@@ -7,13 +7,16 @@ import br.com.gva.imobfacil.dto.CorretorDTO;
 import br.com.gva.imobfacil.dto.EnderecoDTO;
 import br.com.gva.imobfacil.dto.ImagemDTO;
 import br.com.gva.imobfacil.dto.ImovelDTO;
+import br.com.gva.imobfacil.dto.ImovelResumoDTO;
 import br.com.gva.imobfacil.dto.request.EnderecoRequest;
 import br.com.gva.imobfacil.dto.request.ImovelRequest;
 import br.com.gva.imobfacil.model.Caracteristica;
 import br.com.gva.imobfacil.model.Corretor;
 import br.com.gva.imobfacil.model.Endereco;
+import br.com.gva.imobfacil.model.Imagem;
 import br.com.gva.imobfacil.model.Imovel;
 import br.com.gva.imobfacil.model.StatusImovel;
+import br.com.gva.imobfacil.model.TipoImovel;
 import br.com.gva.imobfacil.model.TipoNegocio;
 import br.com.gva.imobfacil.repository.CaracteristicaRepository;
 import br.com.gva.imobfacil.repository.CorretorRepository;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +44,7 @@ public class ImovelService {
 
     @Transactional
     public ImovelDTO criarImovel(ImovelRequest request) {
-        Imovel imovel = toEntity(request);
-        return convertToDTO(imovelRepository.save(imovel));
+        return convertToDTO(imovelRepository.save(toEntity(request)));
     }
 
     public ImovelDTO obterImovelPorId(Long id) {
@@ -58,43 +61,44 @@ public class ImovelService {
         return convertToDTO(imovel);
     }
 
-    public Page<ImovelDTO> listarTodos(Pageable pageable) {
-        return imovelRepository.findAll(pageable).map(this::convertToDTO);
+    public Page<ImovelResumoDTO> listarTodos(Pageable pageable) {
+        return imovelRepository.findAll(pageable).map(this::convertToResumoDTO);
     }
 
-    public Page<ImovelDTO> buscarPorFiltros(
+    public Page<ImovelResumoDTO> buscarPorFiltros(
         BigDecimal minPreco,
         BigDecimal maxPreco,
         Integer minQuartos,
         TipoNegocio tipoNegocio,
+        TipoImovel tipoImovel,
         String cidade,
         String bairro,
         Pageable pageable) {
 
         if (cidade != null && bairro != null) {
             return imovelRepository.findByFiltrosCompletos(
-                minPreco, maxPreco, minQuartos, tipoNegocio, cidade, bairro, pageable
-            ).map(this::convertToDTO);
+                minPreco, maxPreco, minQuartos, tipoNegocio, tipoImovel, cidade, bairro, pageable
+            ).map(this::convertToResumoDTO);
         }
         return imovelRepository.findByFiltros(
-            minPreco, maxPreco, minQuartos, tipoNegocio, pageable
-        ).map(this::convertToDTO);
+            minPreco, maxPreco, minQuartos, tipoNegocio, tipoImovel, pageable
+        ).map(this::convertToResumoDTO);
     }
 
-    public Page<ImovelDTO> buscarPorTipoNegocio(TipoNegocio tipoNegocio, Pageable pageable) {
-        return imovelRepository.findByTipoNegocio(tipoNegocio, pageable).map(this::convertToDTO);
+    public Page<ImovelResumoDTO> buscarPorTipoNegocio(TipoNegocio tipoNegocio, Pageable pageable) {
+        return imovelRepository.findByTipoNegocio(tipoNegocio, pageable).map(this::convertToResumoDTO);
     }
 
-    public Page<ImovelDTO> buscarPorStatus(StatusImovel status, Pageable pageable) {
-        return imovelRepository.findByStatus(status, pageable).map(this::convertToDTO);
+    public Page<ImovelResumoDTO> buscarPorStatus(StatusImovel status, Pageable pageable) {
+        return imovelRepository.findByStatus(status, pageable).map(this::convertToResumoDTO);
     }
 
-    public Page<ImovelDTO> buscarPorCidade(String cidade, Pageable pageable) {
-        return imovelRepository.findByEndereco_Cidade(cidade, pageable).map(this::convertToDTO);
+    public Page<ImovelResumoDTO> buscarPorCidade(String cidade, Pageable pageable) {
+        return imovelRepository.findByEndereco_Cidade(cidade, pageable).map(this::convertToResumoDTO);
     }
 
-    public Page<ImovelDTO> buscarPorBairro(String bairro, Pageable pageable) {
-        return imovelRepository.findByEndereco_Bairro(bairro, pageable).map(this::convertToDTO);
+    public Page<ImovelResumoDTO> buscarPorBairro(String bairro, Pageable pageable) {
+        return imovelRepository.findByEndereco_Bairro(bairro, pageable).map(this::convertToResumoDTO);
     }
 
     @Transactional
@@ -106,6 +110,7 @@ public class ImovelService {
         imovel.setDescricao(request.getDescricao());
         imovel.setPreco(request.getPreco());
         imovel.setTipoNegocio(request.getTipoNegocio());
+        imovel.setTipoImovel(request.getTipoImovel());
         imovel.setAreaTotalM2(request.getAreaTotalM2());
         imovel.setAreaPrivativaM2(request.getAreaPrivativaM2());
         imovel.setQuartos(request.getQuartos());
@@ -128,6 +133,10 @@ public class ImovelService {
         imovelRepository.delete(imovel);
     }
 
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
     private Imovel toEntity(ImovelRequest request) {
         Imovel imovel = new Imovel();
         imovel.setReferencia(request.getReferencia());
@@ -135,6 +144,7 @@ public class ImovelService {
         imovel.setDescricao(request.getDescricao());
         imovel.setPreco(request.getPreco());
         imovel.setTipoNegocio(request.getTipoNegocio());
+        imovel.setTipoImovel(request.getTipoImovel());
         imovel.setAreaTotalM2(request.getAreaTotalM2());
         imovel.setAreaPrivativaM2(request.getAreaPrivativaM2());
         imovel.setQuartos(request.getQuartos());
@@ -174,7 +184,8 @@ public class ImovelService {
         return caracteristicaRepository.findAllById(ids);
     }
 
-    private ImovelDTO convertToDTO(Imovel imovel) {
+    // DTO de detalhe completo (GET /imoveis/{id})
+    public ImovelDTO convertToDTO(Imovel imovel) {
         ImovelDTO dto = new ImovelDTO();
         dto.setId(imovel.getId());
         dto.setReferencia(imovel.getReferencia());
@@ -182,6 +193,7 @@ public class ImovelService {
         dto.setDescricao(imovel.getDescricao());
         dto.setPreco(imovel.getPreco());
         dto.setTipoNegocio(imovel.getTipoNegocio());
+        dto.setTipoImovel(imovel.getTipoImovel());
         dto.setAreaTotalM2(imovel.getAreaTotalM2());
         dto.setAreaPrivativaM2(imovel.getAreaPrivativaM2());
         dto.setQuartos(imovel.getQuartos());
@@ -220,6 +232,7 @@ public class ImovelService {
 
         if (imovel.getImagens() != null) {
             dto.setImagens(imovel.getImagens().stream()
+                .sorted(Comparator.comparingInt(Imagem::getOrdem))
                 .map(img -> {
                     ImagemDTO imgDTO = new ImagemDTO();
                     imgDTO.setId(img.getId());
@@ -240,6 +253,35 @@ public class ImovelService {
                     return carDTO;
                 })
                 .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
+    // DTO de resumo para listagens (GET /imoveis)
+    private ImovelResumoDTO convertToResumoDTO(Imovel imovel) {
+        ImovelResumoDTO dto = new ImovelResumoDTO();
+        dto.setId(imovel.getId());
+        dto.setReferencia(imovel.getReferencia());
+        dto.setTitulo(imovel.getTitulo());
+        dto.setPreco(imovel.getPreco());
+        dto.setTipoNegocio(imovel.getTipoNegocio());
+        dto.setTipoImovel(imovel.getTipoImovel());
+        dto.setQuartos(imovel.getQuartos());
+        dto.setVagas(imovel.getVagas());
+        dto.setAreaTotalM2(imovel.getAreaTotalM2());
+        dto.setStatus(imovel.getStatus());
+
+        if (imovel.getEndereco() != null) {
+            dto.setCidade(imovel.getEndereco().getCidade());
+            dto.setBairro(imovel.getEndereco().getBairro());
+            dto.setEstado(imovel.getEndereco().getEstado());
+        }
+
+        if (imovel.getImagens() != null && !imovel.getImagens().isEmpty()) {
+            imovel.getImagens().stream()
+                .min(Comparator.comparingInt(Imagem::getOrdem))
+                .ifPresent(img -> dto.setThumbnail(img.getUrl()));
         }
 
         return dto;

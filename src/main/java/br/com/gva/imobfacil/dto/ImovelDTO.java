@@ -1,6 +1,7 @@
 package br.com.gva.imobfacil.dto;
 
 import br.com.gva.imobfacil.model.StatusImovel;
+import br.com.gva.imobfacil.model.TipoImovel;
 import br.com.gva.imobfacil.model.TipoNegocio;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class ImovelDTO {
     private String descricao;
     private BigDecimal preco;
     private TipoNegocio tipoNegocio;
+    private TipoImovel tipoImovel;
     private BigDecimal areaTotalM2;
     private BigDecimal areaPrivativaM2;
     private Integer quartos;
