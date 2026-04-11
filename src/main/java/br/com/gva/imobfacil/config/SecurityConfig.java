@@ -37,6 +37,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Auth endpoint — público
                 .requestMatchers("/auth/**").permitAll()
+                // Swagger UI e OpenAPI docs — público em dev
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 // H2 console — público em dev
                 .requestMatchers("/h2-console/**").permitAll()
                 // Arquivos de upload — servidos como recurso estático
