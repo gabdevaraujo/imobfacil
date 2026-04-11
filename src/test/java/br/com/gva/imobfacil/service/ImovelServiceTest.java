@@ -115,7 +115,6 @@ class ImovelServiceTest {
         savedImovel.setCorretor(corretor);
 
         when(corretorRepository.findById(1L)).thenReturn(Optional.of(corretor));
-        when(caracteristicaRepository.findAllById(any())).thenReturn(Collections.emptyList());
         when(imovelRepository.save(any())).thenReturn(savedImovel);
 
         ImovelDTO result = imovelService.criarImovel(request);

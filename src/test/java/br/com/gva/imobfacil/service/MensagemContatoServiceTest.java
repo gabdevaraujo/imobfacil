@@ -1,6 +1,7 @@
 package br.com.gva.imobfacil.service;
 
 import br.com.gva.imobfacil.dto.MensagemContatoDTO;
+import br.com.gva.imobfacil.service.EmailService;
 import br.com.gva.imobfacil.dto.request.MensagemContatoRequest;
 import br.com.gva.imobfacil.exception.RecursoNaoEncontradoException;
 import br.com.gva.imobfacil.model.MensagemContato;
@@ -25,6 +26,7 @@ class MensagemContatoServiceTest {
 
     @Mock MensagemContatoRepository mensagemContatoRepository;
     @Mock ImovelRepository imovelRepository;
+    @Mock EmailService emailService;
     @InjectMocks MensagemContatoService mensagemContatoService;
 
     @Test

@@ -1,9 +1,12 @@
 package br.com.gva.imobfacil.controller;
 
 import br.com.gva.imobfacil.dto.MensagemContatoDTO;
+import br.com.gva.imobfacil.dto.request.AtualizarStatusLeadRequest;
 import br.com.gva.imobfacil.dto.request.MensagemContatoRequest;
+import br.com.gva.imobfacil.model.StatusLead;
 import br.com.gva.imobfacil.service.MensagemContatoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,9 +44,16 @@ public class MensagemContatoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todas as mensagens", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Listar mensagens com filtro opcional por status",
+        security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponse(responseCode = "401", description = "Não autenticado")
-    public ResponseEntity<Page<MensagemContatoDTO>> listarTodas(Pageable pageable) {
+    public ResponseEntity<Page<MensagemContatoDTO>> listarTodas(
+        @Parameter(description = "NOVO | EM_CONTATO | VISITA_AGENDADA | FECHADO | DESCARTADO")
+        @RequestParam(required = false) StatusLead status,
+        Pageable pageable) {
+        if (status != null) {
+            return ResponseEntity.ok(mensagemContatoService.listarPorStatus(status, pageable));
+        }
         return ResponseEntity.ok(mensagemContatoService.listarTodas(pageable));
     }
 
@@ -54,6 +64,20 @@ public class MensagemContatoController {
         @PathVariable Long imovelId,
         Pageable pageable) {
         return ResponseEntity.ok(mensagemContatoService.listarPorImovelId(imovelId, pageable));
+    }
+
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Atualizar status do lead",
+        description = "Avança ou retrocede o status do lead no ciclo de vida. observacoes é opcional.",
+        security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Status atualizado")
+    @ApiResponse(responseCode = "400", description = "Status inválido")
+    @ApiResponse(responseCode = "401", description = "Não autenticado")
+    @ApiResponse(responseCode = "404", description = "Mensagem não encontrada")
+    public ResponseEntity<MensagemContatoDTO> atualizarStatus(
+        @PathVariable Long id,
+        @Valid @RequestBody AtualizarStatusLeadRequest request) {
+        return ResponseEntity.ok(mensagemContatoService.atualizarStatus(id, request));
     }
 
     @DeleteMapping("/{id}")

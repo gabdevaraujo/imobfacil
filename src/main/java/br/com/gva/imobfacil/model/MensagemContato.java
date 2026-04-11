@@ -33,7 +33,14 @@ public class MensagemContato {
     @ManyToOne
     @JoinColumn(name = "imovel_id")
     private Imovel imovel;
-    
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataEnvio = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusLead status = StatusLead.NOVO;
+
+    @Column(columnDefinition = "TEXT")
+    private String observacoes;
 }

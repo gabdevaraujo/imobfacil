@@ -22,6 +22,8 @@ spring:
   sql:
     init:
       mode: always
+  flyway:
+    enabled: false
 
 server:
   port: 8080
@@ -31,6 +33,9 @@ server:
 app:
   upload:
     dir: ${UPLOAD_DIR:uploads/imagens}
+  mail:
+    from: ${MAIL_FROM:noreply@imobfacil.com.br}
+    admin: ${MAIL_ADMIN:contato@imobfacil.com.br}
 
 jwt:
   secret: ${JWT_SECRET:6D5A7134743777217A25432A462D4A614E645267556B586E327235753878214125442A472D4B6150645367566B59703373367639792442264529482B4D62516548}

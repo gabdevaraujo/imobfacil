@@ -169,27 +169,27 @@ INSERT INTO imagem (id, url, descricao, ordem, imovel_id) VALUES
 -- -------------------------------------------------------------
 -- MENSAGENS DE CONTATO (leads)
 -- -------------------------------------------------------------
-INSERT INTO mensagem_contato (id, nome, email, telefone, mensagem, imovel_id, data_envio) VALUES
+INSERT INTO mensagem_contato (id, nome, email, telefone, mensagem, imovel_id, data_envio, status, observacoes) VALUES
 
 (1, 'Maria Oliveira',
  'maria.oliveira@email.com', '(11) 98888-0001',
  'Tenho interesse no apartamento dos Jardins. Qual a disponibilidade para visita esta semana?',
- 1, '2026-03-10 14:22:00'),
+ 1, '2026-03-10 14:22:00', 'VISITA_AGENDADA', 'Visita confirmada para 15/03 às 10h.'),
 
 (2, 'Carlos Pereira',
  'carlos.pereira@email.com', '(21) 97777-0002',
  'Gostaria de agendar uma visita à cobertura. Aceita permuta com apartamento em Moema?',
- 2, '2026-03-12 09:15:00'),
+ 2, '2026-03-12 09:15:00', 'EM_CONTATO', 'Aguardando retorno sobre proposta de permuta.'),
 
 (3, 'Fernanda Santos',
  'fernanda.santos@email.com', '(11) 96666-0003',
  'Vi o flat de Copacabana e tenho interesse para o mês de julho. Qual o valor mínimo de diárias?',
- 6, '2026-03-15 17:45:00'),
+ 6, '2026-03-15 17:45:00', 'NOVO', NULL),
 
 (4, 'Ricardo Almeida',
  'ricardo.almeida@email.com', '(41) 95555-0004',
  'Preciso de um apartamento de 2 quartos para alugar em Curitiba, de preferência no centro. Vocês têm outras opções além do AP-005?',
- NULL, '2026-03-18 11:00:00');
+ NULL, '2026-03-18 11:00:00', 'DESCARTADO', 'Fora da área de atuação.');
 
 
 -- -------------------------------------------------------------

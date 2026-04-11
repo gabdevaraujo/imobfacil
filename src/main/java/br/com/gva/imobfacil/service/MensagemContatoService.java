@@ -3,9 +3,11 @@ import br.com.gva.imobfacil.exception.RecursoNaoEncontradoException;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.gva.imobfacil.dto.MensagemContatoDTO;
+import br.com.gva.imobfacil.dto.request.AtualizarStatusLeadRequest;
 import br.com.gva.imobfacil.dto.request.MensagemContatoRequest;
 import br.com.gva.imobfacil.model.Imovel;
 import br.com.gva.imobfacil.model.MensagemContato;
+import br.com.gva.imobfacil.model.StatusLead;
 import br.com.gva.imobfacil.repository.ImovelRepository;
 import br.com.gva.imobfacil.repository.MensagemContatoRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +24,13 @@ public class MensagemContatoService {
 
     private final MensagemContatoRepository mensagemContatoRepository;
     private final ImovelRepository imovelRepository;
+    private final EmailService emailService;
 
     @Transactional
     public MensagemContatoDTO criarMensagem(MensagemContatoRequest request) {
         MensagemContato mensagem = toEntity(request);
         MensagemContato saved = mensagemContatoRepository.save(mensagem);
-        notificarCorretor(saved);
+        emailService.enviarNotificacaoLead(saved);
         return convertToDTO(saved);
     }
 
@@ -39,6 +42,21 @@ public class MensagemContatoService {
 
     public Page<MensagemContatoDTO> listarTodas(Pageable pageable) {
         return mensagemContatoRepository.findAll(pageable).map(this::convertToDTO);
+    }
+
+    public Page<MensagemContatoDTO> listarPorStatus(StatusLead status, Pageable pageable) {
+        return mensagemContatoRepository.findByStatus(status, pageable).map(this::convertToDTO);
+    }
+
+    @Transactional
+    public MensagemContatoDTO atualizarStatus(Long id, AtualizarStatusLeadRequest request) {
+        MensagemContato mensagem = mensagemContatoRepository.findById(id)
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Mensagem não encontrada com ID: " + id));
+        mensagem.setStatus(request.getStatus());
+        if (request.getObservacoes() != null) {
+            mensagem.setObservacoes(request.getObservacoes());
+        }
+        return convertToDTO(mensagemContatoRepository.save(mensagem));
     }
 
     public Page<MensagemContatoDTO> listarPorImovelId(Long imovelId, Pageable pageable) {
@@ -66,24 +84,6 @@ public class MensagemContatoService {
         return mensagem;
     }
 
-    private void notificarCorretor(MensagemContato mensagem) {
-        String corretor = mensagem.getImovel() != null ?
-            mensagem.getImovel().getCorretor().getNome() : "Administrador";
-
-        log.info("=== NOTIFICAÇÃO DE CONTATO ===");
-        log.info("Para: {}", corretor);
-        log.info("De: {} ({})", mensagem.getNome(), mensagem.getEmail());
-        log.info("Telefone: {}", mensagem.getTelefone());
-        if (mensagem.getImovel() != null) {
-            log.info("Imóvel: {} - Ref: {}",
-                mensagem.getImovel().getTitulo(),
-                mensagem.getImovel().getReferencia());
-        }
-        log.info("Mensagem: {}", mensagem.getMensagem());
-        log.info("Data: {}", mensagem.getDataEnvio());
-        log.info("=============================");
-    }
-
     public MensagemContatoDTO convertToDTO(MensagemContato mensagem) {
         MensagemContatoDTO dto = new MensagemContatoDTO();
         dto.setId(mensagem.getId());
@@ -93,6 +93,8 @@ public class MensagemContatoService {
         dto.setMensagem(mensagem.getMensagem());
         dto.setImovelId(mensagem.getImovel() != null ? mensagem.getImovel().getId() : null);
         dto.setDataEnvio(mensagem.getDataEnvio());
+        dto.setStatus(mensagem.getStatus());
+        dto.setObservacoes(mensagem.getObservacoes());
         return dto;
     }
 }
